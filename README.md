@@ -1,6 +1,6 @@
 # Laravel CRUDIFY
 
-Easy thinks to generate CRUD with laravel.
+Easy things to generate CRUD with laravel.
 
 ## Installation
 
