@@ -12,7 +12,7 @@ composer require defrindr/crudify
 
 1. Running generator
   ```sh
-  php artisan app:crud --module={module name} {model name}
+  php artisan crudify:gen --module={module name} {model name}
   ```
   It will generate Model, Controller, Service, Request, and Resource in same time
 2. Register to route
