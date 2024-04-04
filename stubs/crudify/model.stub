@@ -1,0 +1,30 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Defrindr\Crudify\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * Auto-generated Model {{ class }}
+ * @author defrindr
+ */
+class {{ class }} extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $table = '';
+
+    protected $fillable = [];
+
+    protected $hidden = ['created_at', 'updated_at'];
+
+    public function scopeSearch(Builder $builder, string $keyword): void
+    {
+        $builder->where(function ($builder) use ($keyword) {
+            // $builder->where('name', 'like', "%$keyword%");
+        });
+    }
+}

@@ -1,0 +1,77 @@
+<?php
+
+namespace {{ namespace }};
+
+use Defrindr\Crudify\Exceptions\NotFoundHttpException;
+use Defrindr\Crudify\Resources\PaginationCollection;
+use {{ modelNamespace }};
+use {{ resourceNamespace }};
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * Kelas untuk handling bisnis proses
+ * auto-generated {{ class }}
+ * @author defrindr
+ */
+class {{ class }}
+{
+    /**
+     * Mengambil paginasi data dari resources
+     */
+    public function list(int $perPage, string $sort, string $keyword): JsonResource
+    {
+        $pagination = {{ modelClass }}::orderBy('id', $sort)
+            ->search($keyword)
+            ->paginate($perPage);
+
+        return new PaginationCollection($pagination, {{ resourceClass }}::class);
+    }
+
+    /**
+     * Mendapatkan resource by id
+     */
+    public function getById(int $id): JsonResource
+    {
+        $resource = self::has($id);
+        return new {{ resourceClass }}($resource);
+    }
+
+    /**
+     * Menyimpan payload ke database
+     */
+    public function store(array $payload): bool
+    {
+        return {{ modelClass }}::create($payload) ? true : false;
+    }
+
+    /**
+     * Menyimpan perubahan payload ke database sesuai dengan resource yang dipilih
+     */
+    public function update(int $id, array $payload): bool
+    {
+        $resource = self::has($id);
+        $payload = array_filter($payload, 'strlen');
+
+        return $resource->update($payload) ? true : false;
+    }
+
+    /**
+     * Menghapus aksi dari database
+     */
+    public function destroy(int $id): bool
+    {
+        $resource = self::has($id);
+
+        return $resource->delete();
+    }
+
+    public function has(int $id): {{ modelClass }}
+    {
+        $resource = {{ modelClass }}::find($id);
+        if (! $resource) {
+            throw new NotFoundHttpException("Resource #{$id} tidak ditemukan.");
+        }
+
+        return $resource;
+    }
+}
