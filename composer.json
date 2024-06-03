@@ -16,10 +16,12 @@
     ],
     "minimum-stability": "stable",
     "version": "1.0.2",
-    "require": {},
     "extra": {
         "laravel": {
             "providers": "Defrindr\\Crudify\\CrudifyServiceProvider"
         }
+    },
+    "require-dev": {
+        "laravel/pint": "^1.15"
     }
 }

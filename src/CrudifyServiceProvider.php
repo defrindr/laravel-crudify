@@ -2,6 +2,10 @@
 
 namespace Defrindr\Crudify;
 
+use Defrindr\Crudify\Exceptions\BadRequestHttpException;
+use Defrindr\Crudify\Exceptions\ForbiddenHttpException;
+use Defrindr\Crudify\Exceptions\UnauthenticatedHttpException;
+use Defrindr\Crudify\Exceptions\UnprocessableEntityHttpException;
 use Defrindr\Crudify\Helpers\ResponseHelper;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -31,17 +35,26 @@ class CrudifyServiceProvider extends ServiceProvider
             function ($handler) {
                 $exceptions = new Exceptions($handler);
                 $exceptions->render(function (Exception $e, Request $request) {
-                    if ($e instanceof ModelNotFoundException && $request->wantsJson()) {
-                        return ResponseHelper::modelNotFound($e->getMessage());
-                    }
 
-                    if ($e instanceof MethodNotAllowedHttpException && $request->wantsJson()) {
-                        return ResponseHelper::methodNotAllowed($e->getMessage());
+                    if ($request->wantsJson()) {
+                        if ($e instanceof BadRequestHttpException) {
+                            return ResponseHelper::badRequest($e->getMessage());
+                        } else if ($e instanceof ForbiddenHttpException) {
+                            return ResponseHelper::unAuthorization($e->getMessage());
+                        } else if ($e instanceof MethodNotAllowedHttpException) {
+                            return ResponseHelper::methodNotAllowed($e->getMessage());
+                        } else if ($e instanceof ModelNotFoundException) {
+                            return ResponseHelper::modelNotFound($e->getMessage());
+                        } else if ($e instanceof UnauthenticatedHttpException) {
+                            return ResponseHelper::error($e);
+                        } else if ($e instanceof UnprocessableEntityHttpException) {
+                            return ResponseHelper::conflict($e->getMessage());
+                        }
                     }
                 });
             },
         );
 
-        $this->loadRoutesFrom(__DIR__ . "/web.php");
+        $this->loadRoutesFrom(__DIR__ . '/web.php');
     }
 }

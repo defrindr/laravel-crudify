@@ -2,16 +2,26 @@
 
 namespace Defrindr\Crudify\Helpers;
 
-use Illuminate\Http\Request;
-
 class PaginationHelper
 {
     /**
      * Parameter
      */
-    const PARAM_PERPAGE = 'per-page';
+    // private $queryPage = 'page';
+    private $queryLimit = 'limit';
 
-    const PARAM_SORT = 'sort';
+    private $querySortDirection = 'direction';
+
+    private $queryGlobalSearch = 'search';
+
+    private $querySortColumn = 'sort';
+
+    // private $defaultPage = 1;
+    private $defaultSortColumn = 'id';
+
+    private $defaultSortDirection = 'desc';
+
+    private $defaultLimit = 10;
 
     /**
      * Internal variable
@@ -22,14 +32,33 @@ class PaginationHelper
 
     const SORTING_CONDITIONS = ['asc', 'desc'];
 
+    public function setAttribute(string $attribute, string $param)
+    {
+        $this->$attribute = $param;
+    }
+
     /**
      * Mendapatkan custom per-page dari inputan pengguna
      */
-    public static function perPage(Request $request, int $defaultPerPage = 10): int
+    public function resolveLimit(array $request): int
     {
-        $customPerPage = $request->post(self::PARAM_PERPAGE) ?? $request->get(self::PARAM_PERPAGE);
+        if (isset($request[$this->queryLimit])) {
+            return intval($request[$this->queryLimit]);
+        }
 
-        return intval($customPerPage ?? $defaultPerPage);
+        return $this->defaultLimit;
+    }
+
+    /**
+     * Mendapatkan custom global search dari inputan pengguna
+     */
+    public function resolveGlobalSearch(array $request): string
+    {
+        if (isset($request[$this->queryGlobalSearch])) {
+            return $request[$this->queryGlobalSearch];
+        }
+
+        return '';
     }
 
     /**
@@ -38,8 +67,28 @@ class PaginationHelper
      * @param  int  $defaultPerPage
      * @return int
      */
-    public static function sortCondition(Request $request, string $defaultSortCondition = 'desc'): string
+    public function resolveSortDirection(array $request): string
     {
-        return in_array($request->get(self::PARAM_SORT), self::SORTING_CONDITIONS) ? $request->get(self::PARAM_SORT) : $defaultSortCondition;
+        if (isset($request[$this->querySortDirection])) {
+            return in_array($request[$this->querySortDirection], self::SORTING_CONDITIONS) ? $request[$this->querySortDirection] : $this->defaultSortDirection;
+        }
+
+        return $this->defaultSortDirection;
+    }
+
+    /**
+     * Mendapatkan custom per-page dari inputan pengguna
+     *
+     * @param  int  $defaultPerPage
+     * @return int
+     */
+    public function resolveSortColumn(array $request, array $availableColumns): string
+    {
+        if (isset($request[$this->querySortColumn])) {
+            $column = $request[$this->querySortColumn];
+            if (in_array($column, $availableColumns)) return $column;
+        }
+
+        return $this->defaultSortColumn;
     }
 }

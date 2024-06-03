@@ -28,11 +28,7 @@ class {{ class }} extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $perPage = PaginationHelper::perPage($request);
-        $sort = PaginationHelper::sortCondition($request, PaginationHelper::SORT_DESC);
-        $keyword = $request->get('search') ?? '';
-
-        return ResponseHelper::successWithData($this->service->list($perPage, $sort, $keyword));
+        return ResponseHelper::successWithData($this->service->list($request->all()));
     }
 
     public function show(int $id): JsonResponse

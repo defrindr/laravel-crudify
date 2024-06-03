@@ -37,13 +37,13 @@ class ResponseHelper
         return static::response($body, 422);
     }
 
-    public static function error(Throwable $throwable, ?string $message)
+    public static function error(Throwable $throwable, ?string $message = null)
     {
         if ($throwable instanceof HttpException) {
-            $message = $throwable->getMessage();
+            $message = $throwable->getMessage() ?? 'Terjadi kesalahan tidak terduga';
             $code = $throwable->getStatusCode();
         } else {
-            $message = $message ?? $throwable->getMessage();
+            $message = $message ?? $throwable->getMessage() ?? 'Terjadi kesalahan tidak terduga';
             $code = 500;
         }
 
@@ -58,9 +58,9 @@ class ResponseHelper
         return static::response($body, $code);
     }
 
-    public static function unAuthorization()
+    public static function unAuthorization(?string $message = 'UnAuthorization')
     {
-        $body = ['message' => 'UnAuthorization'];
+        $body = ['message' => $message];
 
         return static::response($body, 403);
     }

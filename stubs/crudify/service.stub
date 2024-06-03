@@ -2,6 +2,7 @@
 
 namespace {{ namespace }};
 
+use Defrindr\Crudify\Helpers\PaginationHelper;
 use Defrindr\Crudify\Exceptions\NotFoundHttpException;
 use Defrindr\Crudify\Resources\PaginationCollection;
 use {{ modelNamespace }};
@@ -15,14 +16,25 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class {{ class }}
 {
+    private $paginator;
+    public function __construct()
+    {
+        $this->paginator = new PaginationHelper();
+    }
+
     /**
      * Mengambil paginasi data dari resources
      */
-    public function list(int $perPage, string $sort, string $keyword): JsonResource
+    public function list(array $payload): JsonResource
     {
-        $pagination = {{ modelClass }}::orderBy('id', $sort)
-            ->search($keyword)
-            ->paginate($perPage);
+        $builder = {{ modelClass }}::query();
+        $pagination = $builder
+            ->orderBy(
+                $this->paginator->resolveSortColumn($payload, {{ modelClass }}::getTableColumns()),
+                $this->paginator->resolveSortDirection($payload)
+            )
+            ->search($this->paginator->resolveGlobalSearch($payload))
+            ->paginate($this->paginator->resolveLimit($payload));
 
         return new PaginationCollection($pagination, {{ resourceClass }}::class);
     }

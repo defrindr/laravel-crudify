@@ -15,4 +15,12 @@ class Model extends BaseModel
     {
         return with(new static)->getTable();
     }
+
+    public static function getTableColumns()
+    {
+        $class = with(new static);
+        return $class->getConnection()
+            ->getSchemaBuilder()
+            ->getColumnListing($class->getTable());
+    }
 }

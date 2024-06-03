@@ -31,7 +31,7 @@ class CrudGenerator extends Command
         $name = $this->argument('name');
 
         $module = ucwords($this->option('module'));
-        if (!$module) {
+        if (! $module) {
             $this->components->error('Module must be set');
             exit(0);
         }
@@ -39,8 +39,8 @@ class CrudGenerator extends Command
         $this->components->info("$module");
 
         $this->model($name, $module);
-        $this->request($name . 'Store', $module);
-        $this->request($name . 'Update', $module);
+        $this->request($name.'Store', $module);
+        $this->request($name.'Update', $module);
         $this->controller($name, $module);
         $this->service($name, $module);
         $this->resource($name, $module);
@@ -67,7 +67,7 @@ class CrudGenerator extends Command
         );
 
         $path = $module ? "/Models/{$module}/" : '/Models';
-        if (!file_exists(app_path($path))) {
+        if (! file_exists(app_path($path))) {
             mkdir(app_path($path), 0777, true);
         }
 
@@ -78,14 +78,14 @@ class CrudGenerator extends Command
     {
         $namespace = $this->getNamespace('Controllers', $module);
 
-        $storeRequestClass = $name . 'StoreRequest';
-        $updateRequestClass = $name . 'UpdateRequest';
-        $serviceClass = $name . 'Service';
-        $class = $name . 'Controller';
+        $storeRequestClass = $name.'StoreRequest';
+        $updateRequestClass = $name.'UpdateRequest';
+        $serviceClass = $name.'Service';
+        $class = $name.'Controller';
 
-        $storeRequestNamespace = $this->getNamespace('Requests', $module) . '\\' . $storeRequestClass;
-        $updateRequestNamespace = $this->getNamespace('Requests', $module) . '\\' . $updateRequestClass;
-        $serviceNamespace = $this->getNamespace('Services', $module) . '\\' . $serviceClass;
+        $storeRequestNamespace = $this->getNamespace('Requests', $module).'\\'.$storeRequestClass;
+        $updateRequestNamespace = $this->getNamespace('Requests', $module).'\\'.$updateRequestClass;
+        $serviceNamespace = $this->getNamespace('Services', $module).'\\'.$serviceClass;
 
         $controllerTemplate = str_replace(
             [
@@ -114,23 +114,23 @@ class CrudGenerator extends Command
         );
 
         $path = $this->getPath('Controllers', $module);
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
-        $this->create($path . "/{$name}Controller.php", $controllerTemplate);
+        $this->create($path."/{$name}Controller.php", $controllerTemplate);
     }
 
     protected function service(string $name, $module = null): void
     {
         $namespace = $this->getNamespace('Services', $module);
 
-        $class = $name . 'Service';
+        $class = $name.'Service';
         $modelClass = $name;
-        $resourceClass = $name . 'Resource';
+        $resourceClass = $name.'Resource';
 
-        $resourceNamespace = $this->getNamespace('Resources', $module) . '\\' . $resourceClass;
-        $ModelNamespace = $this->getNamespaceModel($module) . '\\' . $modelClass;
+        $resourceNamespace = $this->getNamespace('Resources', $module).'\\'.$resourceClass;
+        $ModelNamespace = $this->getNamespaceModel($module).'\\'.$modelClass;
 
         $serviceTemplate = str_replace(
             [
@@ -155,11 +155,11 @@ class CrudGenerator extends Command
         );
 
         $path = $this->getPath('Services', $module);
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
-        $this->create($path . "/{$name}Service.php", $serviceTemplate);
+        $this->create($path."/{$name}Service.php", $serviceTemplate);
     }
 
     protected function request(string $name, $module = null): void
@@ -175,13 +175,13 @@ class CrudGenerator extends Command
             [
                 $this->rootNamespace(),
                 $namespace,
-                $name . 'Request',
+                $name.'Request',
             ],
             $this->getStub('Request')
         );
 
         $path = $this->getPath('Requests', $module);
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
@@ -201,13 +201,13 @@ class CrudGenerator extends Command
             [
                 $this->rootNamespace(),
                 $namespace,
-                $name . 'Resource',
+                $name.'Resource',
             ],
             $this->getStub('Resource')
         );
 
         $path = $this->getPath('Resources', $module);
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
@@ -221,9 +221,9 @@ class CrudGenerator extends Command
 
     protected function getNamespace(string $type, $module = null)
     {
-        $namespace = $this->rootNamespace() . 'Http\\' . ucwords($type);
+        $namespace = $this->rootNamespace().'Http\\'.ucwords($type);
         if ($module) {
-            $namespace = $this->rootNamespace() . 'Modules\\' . $module . '\\' . ucwords($type);
+            $namespace = $this->rootNamespace().'Modules\\'.$module.'\\'.ucwords($type);
         }
 
         return $namespace;
@@ -231,9 +231,9 @@ class CrudGenerator extends Command
 
     protected function getNamespaceModel($module = null)
     {
-        $namespace = $this->rootNamespace() . 'Models';
+        $namespace = $this->rootNamespace().'Models';
         if ($module) {
-            $namespace = $this->rootNamespace() . 'Models\\' . $module;
+            $namespace = $this->rootNamespace().'Models\\'.$module;
         }
 
         return $namespace;
@@ -249,7 +249,7 @@ class CrudGenerator extends Command
     {
         $path = file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
-            : __DIR__ . "/../". $stub;
+            : __DIR__.'/../'.$stub;
 
         return $path;
     }
@@ -259,8 +259,8 @@ class CrudGenerator extends Command
         $name = ucwords($name);
         $module = ucwords($module);
 
-        return $module ? app_path('/Modules/' . $module . '/' . $name)
-            : app_path('/Http/' . $name);
+        return $module ? app_path('/Modules/'.$module.'/'.$name)
+            : app_path('/Http/'.$name);
     }
 
     /**
@@ -274,8 +274,8 @@ class CrudGenerator extends Command
     protected function create($path, $content)
     {
         if (file_exists($path)) {
-            if ($this->confirm('Do you need overwrite ' . $path)) {
-                $this->components->info($path . ' overwritted');
+            if ($this->confirm('Do you need overwrite '.$path)) {
+                $this->components->info($path.' overwritted');
                 file_put_contents($path, $content);
             }
         } else {
