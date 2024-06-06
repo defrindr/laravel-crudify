@@ -2,10 +2,11 @@
 
 namespace Defrindr\Crudify\Requests;
 
+use Defrindr\Crudify\Exceptions\ForbiddenHttpException;
+use Defrindr\Crudify\Exceptions\ValidationException;
 use Defrindr\Crudify\Helpers\ResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest as BaseFormRequest;
-use Illuminate\Validation\ValidationException;
 
 class FormRequest extends BaseFormRequest
 {
@@ -24,10 +25,7 @@ class FormRequest extends BaseFormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $response = ResponseHelper::validationError($validator?->errors());
-
-        throw (new ValidationException($validator, $response))
-            ->errorBag($this->errorBag)
-            ->redirectTo($this->getRedirectUrl());
+        // $response = ResponseHelper::validationError($validator?->errors());
+        throw new ValidationException($validator);
     }
 }
