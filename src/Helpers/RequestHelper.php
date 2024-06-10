@@ -17,7 +17,7 @@ class RequestHelper
      * @param  string|null  $oldFile  file lama yang akan dihapus ketika berhasil mengunggah file baru
      * @return array berisi parameter success & fileName
      */
-    public static function uploadImage(UploadedFile $file, string $path, ?string $oldFile = null)
+    public static function uploadFile(UploadedFile $file, string $path, ?string $oldFile = null)
     {
         // Handle file Upload
         try {
