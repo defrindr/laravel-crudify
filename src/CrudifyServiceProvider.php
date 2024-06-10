@@ -8,6 +8,7 @@ use Defrindr\Crudify\Exceptions\UnauthenticatedHttpException;
 use Defrindr\Crudify\Exceptions\UnprocessableEntityHttpException;
 use Defrindr\Crudify\Helpers\ResponseHelper;
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\Request;
@@ -29,15 +30,15 @@ class CrudifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
         $this->app->afterResolving(
             \Illuminate\Foundation\Exceptions\Handler::class,
             function ($handler) {
                 $exceptions = new Exceptions($handler);
                 $exceptions->render(function (Exception $e, Request $request) {
-
                     if ($request->wantsJson()) {
-                        if ($e instanceof BadRequestHttpException) {
+                        if ($e instanceof AuthenticationException) {
+                            return ResponseHelper::unAuthencation();
+                        } else if ($e instanceof BadRequestHttpException) {
                             return ResponseHelper::badRequest($e->getMessage());
                         } else if ($e instanceof ForbiddenHttpException) {
                             return ResponseHelper::unAuthorization($e->getMessage());
