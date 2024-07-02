@@ -10,15 +10,16 @@ class ResponseHelper
 {
     protected static function response(mixed $content, int $statusCode)
     {
-        // help debuging
+        // help debug
         if (config('app.env') !== 'production') {
             $content = array_merge($content, [
-                'timestamps' => time(),
-                'executionTime' => round(microtime(true) - LARAVEL_START, 3),
-                'environment' => config('app.env'),
                 'request' => request()->all(),
             ]);
         }
+
+        $content['executionTime'] = round(microtime(true) - LARAVEL_START, 3);
+        $content['timestamps'] = time();
+        $content['environment'] = config('app.env');
 
         return response()->json($content, $statusCode);
     }
@@ -50,10 +51,13 @@ class ResponseHelper
         $body = [
             'message' => $message,
             'errors' => [
-                'description' => $throwable,
                 'class' => get_class($throwable),
             ],
         ];
+
+        if (config('app.env') !== "production") {
+            $body['errors']['description'] = $throwable->getTrace();
+        }
 
         return static::response($body, $code);
     }

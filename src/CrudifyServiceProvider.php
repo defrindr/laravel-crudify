@@ -11,7 +11,11 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
@@ -22,13 +26,12 @@ class CrudifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
     }
 
     /**
      * Bootstrap services.
      */
-    public function boot(): void
+    public function boot(Router $router): void
     {
         $this->app->afterResolving(
             \Illuminate\Foundation\Exceptions\Handler::class,
@@ -50,6 +53,8 @@ class CrudifyServiceProvider extends ServiceProvider
                             return ResponseHelper::error($e);
                         } else if ($e instanceof UnprocessableEntityHttpException) {
                             return ResponseHelper::conflict($e->getMessage());
+                        } else {
+                            return ResponseHelper::error($e);
                         }
                     }
                 });

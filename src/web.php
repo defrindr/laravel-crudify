@@ -1,7 +1,6 @@
 <?php
 
 use Defrindr\Crudify\CrudGenerator;
-use Illuminate\Support\Facades\Route;
 
 if ($this->app->runningInConsole()) {
     $this->commands([
@@ -15,7 +14,3 @@ if ($this->app->runningInConsole()) {
         __DIR__ . '/../stubs' => base_path('stubs'),
     ]);
 }
-
-Route::get('/crudify-test', function () {
-    return 'JOSSS';
-});
